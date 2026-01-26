@@ -1,65 +1,80 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { STATIONS, WEATHER_CONFIG } from '@/constants/weather';
+import StationPicker from '@/components/StationPicker';
+import WeatherCard from '@/components/WeatherCard';
+import ForecastSlider from '@/components/ForecastSlider';
+import SnowDepths from '@/components/SnowDepths';
 
 export default function Home() {
+  const [activeStation, setActiveStation] = useState(STATIONS[0]);
+  const [data, setData] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    setData(null);
+    setError(false);
+    
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${activeStation.lat}&longitude=${activeStation.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,snowfall_sum,wind_speed_10m_max,wind_gusts_10m_max&timezone=auto`;
+    
+    fetch(url)
+      .then(res => {
+        if(!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(json => setData(json))
+      .catch(() => setError(true));
+  }, [activeStation]);
+
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500 font-bold">Erreur de chargement.</div>;
+  if (!data) return <div className="min-h-screen flex items-center justify-center font-black text-slate-400 animate-pulse">CHARGEMENT...</div>;
+
+  const current = {
+    date: data.daily.time[selectedIndex],
+    code: data.daily.weather_code[selectedIndex],
+    tMax: data.daily.temperature_2m_max[selectedIndex],
+    tMin: data.daily.temperature_2m_min[selectedIndex],
+    wind: data.daily.wind_speed_10m_max[selectedIndex],
+    gusts: data.daily.wind_gusts_10m_max?.[selectedIndex] || 0,
+    snow: data.daily.snowfall_sum[selectedIndex] || 0,
+  };
+
+  const weatherConfig = WEATHER_CONFIG[current.code] || WEATHER_CONFIG[0];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans text-slate-900">
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
+
+      <div className="max-w-xl mx-auto">
+        <StationPicker 
+          stations={STATIONS} 
+          activeId={activeStation.id} 
+          onSelect={(s) => { setActiveStation(s); setSelectedIndex(0); }} 
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
+
+        <header className="mb-6">
+          <h1 className="text-3xl font-black italic tracking-tighter uppercase">
+            Météo<span className="text-blue-600 italic"> {activeStation.name}</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        </header>
+
+{/* --- BLOC HAUTEURS DE NEIGE --- */}
+        <SnowDepths snow={current.snow} />
+
+        
+        <WeatherCard current={current} config={weatherConfig} />
+        
+        <ForecastSlider 
+          dailyData={data.daily} 
+          selectedIndex={selectedIndex} 
+          onSelect={setSelectedIndex} 
+        />
+      </div>
+    </main>
   );
 }
