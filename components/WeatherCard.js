@@ -17,7 +17,7 @@ export default function WeatherCard({ current, config }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.3 }}
-       className={`rounded-[3rem] p-8 shadow-2xl border transition-colors duration-500 relative overflow-hidden mb-8 ${
+        className={`rounded-[3rem] p-8 shadow-2xl border transition-colors duration-500 relative overflow-hidden mb-8 ${
           isPowderDay 
             ? 'bg-cyan-50 border-cyan-200' 
             : 'bg-white border-white'

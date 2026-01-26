@@ -1,7 +1,7 @@
 import { Sun, CloudSun, Cloud, CloudRain, CloudRainWind, Snowflake, CloudSnow, CloudLightning, CloudFog, HelpCircle } from 'lucide-react';
 
 export const STATIONS = [
-  { id: "sl", name: "Saint-Lary", lat: 42.82, lon: 0.32 },
+  { id: "sl", name: "Saint-Lary", lat: 42.8330, lon: 0.2576 },
   { id: "py", name: "Peyragudes", lat: 42.79, lon: 0.44 },
   { id: "pe", name: "Piau Engaly", lat: 42.78, lon: 0.15 },
   { id: "tg", name: "Tourmalet", lat: 42.91, lon: 0.14 },

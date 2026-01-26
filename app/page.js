@@ -17,7 +17,7 @@ export default function Home() {
     setData(null);
     setError(false);
     
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${activeStation.lat}&longitude=${activeStation.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,snowfall_sum,wind_speed_10m_max,wind_gusts_10m_max&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${activeStation.lat}&longitude=${activeStation.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,snowfall_sum,wind_speed_10m_max,wind_gusts_10m_max&timezone=auto&forecast_days=16`;
     
     fetch(url)
       .then(res => {
@@ -66,7 +66,7 @@ export default function Home() {
 {/* --- BLOC HAUTEURS DE NEIGE --- */}
         <SnowDepths snow={current.snow} />
 
-        
+
         <WeatherCard current={current} config={weatherConfig} />
         
         <ForecastSlider 
