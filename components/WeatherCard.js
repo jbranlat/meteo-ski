@@ -1,13 +1,36 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Wind, Mountain, Sparkles } from 'lucide-react';
-import { calculateSkiScore } from '@/constants/weather';
+import { Star, Wind, Sparkles } from 'lucide-react';
 
-export default function WeatherCard({ current, config }) {
-  const skiScore = calculateSkiScore(current);
+export default function WeatherCard({ current, config, realSnow }) {
+  const getSkiIndex = () => {
+    let score = 0;
+    const snowHaut = realSnow|| 0;
+    const wind = current.wind || 0;
+    const gusts = current.gusts || 0;
+    const code = current.code;
+
+    // 1. BASE NEIGE (Max 5 pts) - Basé sur la hauteur réelle au sommet
+    if (snowHaut > 100) score += 5;
+    else if (snowHaut > 40) score += 3;
+    else if (snowHaut > 10) score += 1;
+    else return 0; // Pas assez de neige pour skier
+
+    // 2. MÉTÉO & VISIBILITÉ (Max 5 pts)
+    if ([0, 1].includes(code)) score += 5; // Grand soleil
+    else if ([2, 3].includes(code)) score += 4; // Nuages
+    else if ([71, 73, 75, 85, 86].includes(code)) score += 3; // Neige qui tombe
+    else if ([51, 61, 80, 45, 48 ].includes(code)) score -= 2; // Pluie légère OU brouillard
+    else if (code > 61) score -= 5; // Pluie forte / Orage
+
+    // 3. LE VENT & RAFALES (Facteur limitant / Sécurité)
+    // On utilise les rafales car c'est ce qui arrête les remontées mécaniques
+    if (gusts > 80 || wind > 60) score = 1; 
+    else if (gusts > 50) score -= 2;
+    return Math.min(Math.max(Math.round(score), 0), 10);
+  };
+
+  const skiScore = getSkiIndex();
   const isPowderDay = current.snow > 10;
-  
-  // Calcul dynamique de la hauteur de neige (logique de ton code initial)
-  const baseHeight = 80 + (current.snow * 1.5);
 
   return (
     <AnimatePresence mode="wait">
@@ -44,10 +67,10 @@ export default function WeatherCard({ current, config }) {
             <div>
               <h2 className="text-4xl font-black leading-none uppercase italic tracking-tighter">{config.label}</h2>
               <div className="flex items-center gap-2 mt-2">
-                <div className={`flex items-center gap-1 ${Number(skiScore) > 7 ? 'bg-green-500' : Number(skiScore) > 4 ? 'bg-yellow-400' : 'bg-red-500'} text-white px-2 py-0.5 rounded-full text-[10px] font-black shadow-sm italic`}>
+                <div className={`flex items-center gap-1 ${skiScore > 7 ? 'bg-green-500' : skiScore > 4 ? 'bg-yellow-400' : 'bg-red-500'} text-white px-2 py-0.5 rounded-full text-[10px] font-black shadow-sm italic`}>
                   <Star size={10} className="fill-white" /> {skiScore}/10
                 </div>  
-{/* --- NOUVEAU : BADGE POUDREUSE --- */}
+
                 {isPowderDay && (
                   <motion.div 
                     initial={{ scale: 0, rotate: -20 }}
@@ -59,16 +82,14 @@ export default function WeatherCard({ current, config }) {
                 )}
 
                 <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
-                  {Number(skiScore) > 8 ? "Condition optimale" : Number(skiScore) > 5 ? "Bonnes conditions" : "conditions moyennes"}
+                  {skiScore > 8 ? "Condition optimale" : skiScore > 5 ? "Bonnes conditions" : "conditions moyennes"}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* GRILLE DES DONNÉES : Température | Vent | Neige */}
           <div className={`grid ${current.snow > 0 ? 'grid-cols-3' : 'grid-cols-2'} gap-4 border-t border-slate-50 pt-8`}>
             
-            {/* Colonne 1 : Températures */}
             <div className="text-left">
               <p className="text-[9px] font-black text-slate-300 uppercase mb-2">Températures</p>
               <div className="flex items-baseline gap-2">
@@ -77,7 +98,6 @@ export default function WeatherCard({ current, config }) {
               </div>
             </div>
 
-            {/* Colonne 2 : Vent et Rafales */}
             <div className="text-left border-l border-inherit pl-4">
               <p className="text-[9px] font-black text-slate-300 uppercase mb-2 flex items-center gap-1">
                 <Wind size={10}/> Vent moyen (Rafales)
@@ -90,8 +110,7 @@ export default function WeatherCard({ current, config }) {
               </div>
             </div>
 
-            {/* Colonne 3 : Neige Fraîche (Conditionnelle) */}
-            {current.snow > 0 && (
+            {current.snow > 0.9 && (
               <div className="text-right border-l pl-4 border-inherit">
                 <p className="text-[9px] font-black text-slate-300 uppercase mb-2">Neige Fraîche</p>
                 <p className="text-2xl font-black text-cyan-500 animate-pulse">

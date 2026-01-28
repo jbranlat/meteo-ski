@@ -1,9 +1,9 @@
 import { Mountain } from 'lucide-react';
 
 export default function SnowDepths({ snow }) {
-  // Ta logique initiale : 80cm de base + bonus selon les chutes
-  const baseHeight = 80 + (snow * 1.5);
-
+  const SnowBas = Math.round(snow);
+  const SnowHaut = Math.round(snow * 1.5);
+  
   return (
     <div className="grid grid-cols-2 gap-4 mb-6">
       {/* Pied de pistes */}
@@ -16,7 +16,7 @@ export default function SnowDepths({ snow }) {
             Pied de pistes
           </p>
           <p className="text-lg font-black text-slate-700">
-            {Math.round(baseHeight)} cm
+            {SnowBas} cm
           </p>
         </div>
       </div>
@@ -31,7 +31,7 @@ export default function SnowDepths({ snow }) {
             Sommet
           </p>
           <p className="text-lg font-black text-slate-700">
-            {Math.round(baseHeight * 1.9)} cm
+            {SnowHaut} cm
           </p>
         </div>
       </div>

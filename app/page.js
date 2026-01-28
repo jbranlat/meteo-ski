@@ -17,7 +17,7 @@ export default function Home() {
     setData(null);
     setError(false);
     
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${activeStation.lat}&longitude=${activeStation.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,snowfall_sum,wind_speed_10m_max,wind_gusts_10m_max&timezone=auto&forecast_days=16`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${activeStation.lat}&longitude=${activeStation.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,snowfall_sum,wind_speed_10m_max,wind_gusts_10m_max&hourly=snow_depth&timezone=auto&forecast_days=16`;
     
     fetch(url)
       .then(res => {
@@ -39,9 +39,12 @@ export default function Home() {
     wind: data.daily.wind_speed_10m_max[selectedIndex],
     gusts: data.daily.wind_gusts_10m_max?.[selectedIndex] || 0,
     snow: data.daily.snowfall_sum[selectedIndex] || 0,
+    SnowHeight : data.hourly.snow_depth[0] || 0,
   };
 
   const weatherConfig = WEATHER_CONFIG[current.code] || WEATHER_CONFIG[0];
+
+  const snowHeight = Math.round(current.SnowHeight * 100) ;
 
   return (
     <main className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans text-slate-900">
@@ -64,10 +67,9 @@ export default function Home() {
         </header>
 
 {/* --- BLOC HAUTEURS DE NEIGE --- */}
-        <SnowDepths snow={current.snow} />
+        <SnowDepths snow={snowHeight} />
 
-
-        <WeatherCard current={current} config={weatherConfig} />
+        <WeatherCard current={current} config={weatherConfig} realSnow={snowHeight*1.5} />
         
         <ForecastSlider 
           dailyData={data.daily} 
