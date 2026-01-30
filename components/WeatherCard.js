@@ -4,7 +4,7 @@ import { Star, Wind, Sparkles } from 'lucide-react';
 export default function WeatherCard({ current, config, realSnow }) {
   const getSkiIndex = () => {
     let score = 0;
-    const snowHaut = realSnow|| 0;
+    const snowHaut = realSnow || 0;
     const wind = current.wind || 0;
     const gusts = current.gusts || 0;
     const code = current.code;
@@ -19,12 +19,11 @@ export default function WeatherCard({ current, config, realSnow }) {
     if ([0, 1].includes(code)) score += 5; // Grand soleil
     else if ([2, 3].includes(code)) score += 4; // Nuages
     else if ([71, 73, 75, 85, 86].includes(code)) score += 3; // Neige qui tombe
-    else if ([51, 61, 80, 45, 48 ].includes(code)) score -= 2; // Pluie légère OU brouillard
+    else if ([51, 61, 80, 45, 48].includes(code)) score -= 2; // Pluie légère OU brouillard
     else if (code > 61) score -= 5; // Pluie forte / Orage
 
     // 3. LE VENT & RAFALES (Facteur limitant / Sécurité)
-    // On utilise les rafales car c'est ce qui arrête les remontées mécaniques
-    if (gusts > 80 || wind > 60) score = 1; 
+    if (gusts > 80 || wind > 60) score = 1;
     else if (gusts > 50) score -= 2;
     return Math.min(Math.max(Math.round(score), 0), 10);
   };
@@ -40,11 +39,10 @@ export default function WeatherCard({ current, config, realSnow }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.3 }}
-        className={`rounded-[3rem] p-8 shadow-2xl border transition-colors duration-500 relative overflow-hidden mb-8 ${
-          isPowderDay 
-            ? 'bg-cyan-50 border-cyan-200' 
-            : 'bg-white border-white'
-        }`}
+        className={`rounded-[3rem] p-8 shadow-2xl border transition-colors duration-500 relative overflow-hidden mb-8 ${isPowderDay
+          ? 'bg-cyan-50 border-cyan-200'
+          : 'bg-white border-white'
+          }`}
       >
         {/* Icône de fond décorative */}
         <div className={`absolute top-0 right-0 p-8 opacity-10 ${config.color}`}>
@@ -55,9 +53,9 @@ export default function WeatherCard({ current, config, realSnow }) {
           <p className="text-blue-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-2 italic">
             {new Date(current.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
-          
+
           <div className="flex items-center gap-6 mb-8">
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               className={`p-5 rounded-[2rem] shadow-inner ${config.bg} ${config.color}`}
@@ -69,10 +67,10 @@ export default function WeatherCard({ current, config, realSnow }) {
               <div className="flex items-center gap-2 mt-2">
                 <div className={`flex items-center gap-1 ${skiScore > 7 ? 'bg-green-500' : skiScore > 4 ? 'bg-yellow-400' : 'bg-red-500'} text-white px-2 py-0.5 rounded-full text-[10px] font-black shadow-sm italic`}>
                   <Star size={10} className="fill-white" /> {skiScore}/10
-                </div>  
+                </div>
 
                 {isPowderDay && (
-                  <motion.div 
+                  <motion.div
                     initial={{ scale: 0, rotate: -20 }}
                     animate={{ scale: 1, rotate: 0 }}
                     className="flex items-center gap-1 bg-cyan-500 text-white px-2 py-0.5 rounded-full text-[10px] font-black shadow-md italic border border-cyan-400"
@@ -88,32 +86,39 @@ export default function WeatherCard({ current, config, realSnow }) {
             </div>
           </div>
 
-          <div className={`grid ${current.snow > 0 ? 'grid-cols-3' : 'grid-cols-2'} gap-4 border-t border-slate-50 pt-8`}>
-            
+          {/* Section Statistiques - Optimisée pour éviter le chevauchement */}
+          <div className={`grid ${current.snow > 0 ? 'grid-cols-3' : 'grid-cols-2'} gap-2 sm:gap-4 border-t border-slate-50 pt-6`}>
+
+            {/* Températures - On réduit le padding à gauche */}
             <div className="text-left">
-              <p className="text-[9px] font-black text-slate-300 uppercase mb-2">Températures</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-blue-400/70">{Math.round(current.tMin)}°</span>
-                <span className="text-2xl font-black text-red-500">{Math.round(current.tMax)}°</span>
+              <p className="text-[8px] sm:text-[9px] font-black text-slate-300 uppercase mb-1">Températures</p>
+              <div className="flex items-baseline gap-1 sm:gap-2">
+                <span className="text-md sm:text-lg font-bold text-blue-400/70">{Math.round(current.tMin)}°</span>
+                <span className="text-xl sm:text-2xl font-black text-red-500">{Math.round(current.tMax)}°</span>
               </div>
             </div>
 
-            <div className="text-left border-l border-inherit pl-4">
-              <p className="text-[9px] font-black text-slate-300 uppercase mb-2 flex items-center gap-1">
-                <Wind size={10}/> Vent moyen (Rafales)
+            {/* Vent & Rafales - On réduit les marges et la taille sur mobile */}
+            <div className="text-left border-l border-inherit pl-2 sm:pl-4">
+              <p className="text-[8px] sm:text-[9px] font-black text-slate-300 uppercase mb-1 flex items-center gap-1 whitespace-nowrap">
+                <Wind size={10} /> Vent moyen (Rafales)
               </p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-black text-slate-700">
-                  {Math.round(current.wind)} <small className="text-[10px] uppercase text-slate-400 font-bold">km/h</small>
+              <div className="flex items-baseline flex-nowrap gap-0.5 sm:gap-1 whitespace-nowrap">
+                <span className="text-xl sm:text-2xl font-black text-slate-700">
+                  {Math.round(current.wind)}
+                  <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 ml-0.5">Km/h</span>
                 </span>
-                <span className="text-lg font-bold text-red-400">({Math.round(current.gusts)})</span>
+                <span className="text-xs sm:text-sm font-bold text-red-400">
+                  ({Math.round(current.gusts)}<span className="text-[7px] sm:text-[9px] ml-0.5">Kmh</span>)
+                </span>
               </div>
             </div>
 
+            {/* Neige Fraîche - Aligné à droite pour maximiser l'espace central */}
             {current.snow > 0.9 && (
-              <div className="text-right border-l pl-4 border-inherit">
-                <p className="text-[9px] font-black text-slate-300 uppercase mb-2">Neige Fraîche</p>
-                <p className="text-2xl font-black text-cyan-500 animate-pulse">
+              <div className="text-right border-l border-inherit pl-2 sm:pl-4">
+                <p className="text-[8px] sm:text-[9px] font-black text-slate-300 uppercase mb-1">Neige</p>
+                <p className="text-xl sm:text-2xl font-black text-cyan-500 animate-pulse whitespace-nowrap">
                   +{current.snow.toFixed(0)}cm
                 </p>
               </div>
