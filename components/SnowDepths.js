@@ -1,8 +1,8 @@
 import { Mountain } from 'lucide-react';
 
 export default function SnowDepths({ snow }) {
-  const SnowBas = Math.round(snow);
-  const SnowHaut = Math.round(snow * 1.5);
+  const SnowBas = Math.round(snow * 0.6);
+  const SnowHaut = Math.round(snow);
   
   return (
     <div className="grid grid-cols-2 gap-4 mb-6">

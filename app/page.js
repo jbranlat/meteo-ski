@@ -44,7 +44,7 @@ export default function Home() {
 
   const weatherConfig = WEATHER_CONFIG[current.code] || WEATHER_CONFIG[0];
 
-  const snowHeight = Math.round(current.SnowHeight * 100) ;
+  const snowHeight = Math.round(current.SnowHeight * 100 * (activeStation.coef || 1));
 
   return (
     <main className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans text-slate-900">
@@ -69,7 +69,7 @@ export default function Home() {
 {/* --- BLOC HAUTEURS DE NEIGE --- */}
         <SnowDepths snow={snowHeight} />
 
-        <WeatherCard current={current} config={weatherConfig} realSnow={snowHeight*1.5} />
+        <WeatherCard current={current} config={weatherConfig} realSnow={snowHeight} />
         
         <ForecastSlider 
           dailyData={data.daily} 

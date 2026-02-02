@@ -1,16 +1,16 @@
 import { Sun, CloudSun, Cloud, CloudRain, CloudRainWind, Snowflake, CloudSnow, CloudLightning, CloudFog, HelpCircle } from 'lucide-react';
 
 export const STATIONS = [
-  { id: "sl", name: "Saint-Lary", lat: 42.8330, lon: 0.2576 },
-  { id: "py", name: "Peyragudes", lat: 42.79, lon: 0.44 },
-  { id: "pe", name: "Piau Engaly", lat: 42.78, lon: 0.15 },
-  { id: "tg", name: "Tourmalet", lat: 42.91, lon: 0.14 },
-  { id: "ca", name: "Cauterets", lat: 42.88, lon: -0.11 },
-  { id: "go", name: "Gourette", lat: 42.95, lon: -0.33 },
-  { id: "lm", name: "La Mongie", lat: 42.91, lon: 0.18 },
-  { id: "ax", name: "Ax 3 Domaines", lat: 42.70, lon: 1.81 },
-  { id: "fr", name: "Font Romeu", lat: 42.5209, lon: 2.0350},
-  { id: "la", name: "Les Angles", lat: 42.57, lon: 2.07 }
+  { id: "sl", name: "Saint-Lary", lat: 42.8330, lon: 0.2576, coef: 1.7 },
+  { id: "py", name: "Peyragudes", lat: 42.79, lon: 0.44, coef: 1.4 },
+  { id: "pe", name: "Piau Engaly", lat: 42.78, lon: 0.15, coef: 2.2 },
+/*  { id: "tg", name: "Tourmalet", lat: 42.91, lon: 0.14, coef: 2.0 }, */
+  { id: "ca", name: "Cauterets", lat: 42.88, lon: -0.11, coef: 2.3 },
+  { id: "go", name: "Gourette", lat: 42.95, lon: -0.33, coef: 2.2 },
+  { id: "lm", name: "La Mongie", lat: 42.91, lon: 0.18, coef: 2.1 },
+  { id: "ax", name: "Ax 3 Domaines", lat: 42.70, lon: 1.81, coef: 2.0 },
+  { id: "fr", name: "Font Romeu", lat: 42.52, lon: 2.04, coef: 1.8 },
+  { id: "la", name: "Les Angles", lat: 42.57, lon: 2.07, coef: 1.9 }
 ];
 
 export const WEATHER_CONFIG = {
