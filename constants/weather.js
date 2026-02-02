@@ -1,16 +1,14 @@
 import { Sun, CloudSun, Cloud, CloudRain, CloudRainWind, Snowflake, CloudSnow, CloudLightning, CloudFog, HelpCircle } from 'lucide-react';
 
 export const STATIONS = [
-  { id: "sl", name: "Saint-Lary", lat: 42.8330, lon: 0.2576, coef: 1.7 },
-  { id: "py", name: "Peyragudes", lat: 42.79, lon: 0.44, coef: 1.4 },
-  { id: "pe", name: "Piau Engaly", lat: 42.78, lon: 0.15, coef: 2.2 },
-/*  { id: "tg", name: "Tourmalet", lat: 42.91, lon: 0.14, coef: 2.0 }, */
-  { id: "ca", name: "Cauterets", lat: 42.88, lon: -0.11, coef: 2.3 },
-  { id: "go", name: "Gourette", lat: 42.95, lon: -0.33, coef: 2.2 },
-  { id: "lm", name: "La Mongie", lat: 42.91, lon: 0.18, coef: 2.1 },
-  { id: "ax", name: "Ax 3 Domaines", lat: 42.70, lon: 1.81, coef: 2.0 },
-  { id: "fr", name: "Font Romeu", lat: 42.52, lon: 2.04, coef: 1.8 },
-  { id: "la", name: "Les Angles", lat: 42.57, lon: 2.07, coef: 1.9 }
+  { id: "sl", name: "Saint-Lary", lat: 42.81381462046377 , lon: 0.265887911099143 , coef: 1.3 },
+  { id: "py", name: "Peyragudes", lat: 42.785, lon: 0.4430, coef: 1.2 },
+  { id: "pe", name: "Piau Engaly", lat: 42.7750, lon: 0.145, coef: 1.15 },
+  { id: "ca", name: "Cauterets", lat: 42.8715, lon: -0.1585, coef: 3.3 },
+  { id: "go", name: "Gourette", lat: 42.9465, lon: -0.3340, coef: 1.0 },
+  { id: "lm", name: "La Mongie", lat: 42.9030, lon: 0.1555, coef: 1.3 },
+  { id: "p2", name: "Pyrénées 2000", lat: 42.5185, lon: 2.0545, coef: 1.7 },
+  { id: "la", name: "Les Angles", lat: 42.5645, lon: 2.0455, coef: 1.5 }
 ];
 
 export const WEATHER_CONFIG = {

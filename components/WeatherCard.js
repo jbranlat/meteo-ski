@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Wind, Sparkles } from 'lucide-react';
+import { Star, Wind, Sparkles, Zap } from 'lucide-react';
 
 export default function WeatherCard({ current, config, realSnow }) {
   const getSkiIndex = () => {
@@ -9,20 +9,20 @@ export default function WeatherCard({ current, config, realSnow }) {
     const gusts = current.gusts || 0;
     const code = current.code;
 
-    // 1. BASE NEIGE (Max 5 pts) - Basé sur la hauteur réelle au sommet
+    // 1. BASE NEIGE (Max 5 pts)
     if (snowHaut > 100) score += 5;
     else if (snowHaut > 40) score += 3;
     else if (snowHaut > 10) score += 1;
-    else return 0; // Pas assez de neige pour skier
+    else return 0;
 
     // 2. MÉTÉO & VISIBILITÉ (Max 5 pts)
-    if ([0, 1].includes(code)) score += 5; // Grand soleil
-    else if ([2, 3].includes(code)) score += 4; // Nuages
-    else if ([71, 73, 75, 85, 86].includes(code)) score += 3; // Neige qui tombe
-    else if ([51, 61, 80, 45, 48].includes(code)) score -= 2; // Pluie légère OU brouillard
-    else if (code > 61) score -= 5; // Pluie forte / Orage
+    if ([0, 1].includes(code)) score += 5;
+    else if ([2, 3].includes(code)) score += 4;
+    else if ([71, 73, 75, 85, 86].includes(code)) score += 3;
+    else if ([51, 61, 80, 45, 48].includes(code)) score -= 2;
+    else if (code > 61) score -= 5;
 
-    // 3. LE VENT & RAFALES (Facteur limitant / Sécurité)
+    // 3. LE VENT & RAFALES
     if (gusts > 80 || wind > 60) score = 1;
     else if (gusts > 50) score -= 2;
     return Math.min(Math.max(Math.round(score), 0), 10);
@@ -30,6 +30,7 @@ export default function WeatherCard({ current, config, realSnow }) {
 
   const skiScore = getSkiIndex();
   const isPowderDay = current.snow > 10;
+  const isArome = current.model === "AROME";
 
   return (
     <AnimatePresence mode="wait">
@@ -39,13 +40,24 @@ export default function WeatherCard({ current, config, realSnow }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.3 }}
-        className={`rounded-[3rem] p-8 shadow-2xl border transition-colors duration-500 relative overflow-hidden mb-8 ${isPowderDay
-          ? 'bg-cyan-50 border-cyan-200'
-          : 'bg-white border-white'
-          }`}
+        className={`rounded-[3rem] p-8 shadow-2xl border transition-colors duration-500 relative overflow-hidden mb-8 ${
+          isPowderDay ? 'bg-cyan-50 border-cyan-200' : 'bg-white border-white'
+        }`}
       >
+        {/* BADGE DE SOURCE MÉTÉO (AROME / IFS) */}
+        <div className="absolute top-6 right-8 flex flex-col items-end z-20">
+          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase shadow-sm transition-all ${
+            isArome 
+              ? 'bg-blue-600 text-white ring-4 ring-blue-50' 
+              : 'bg-slate-100 text-slate-400'
+          }`}>
+            {isArome && <Zap size={10} className="fill-white animate-pulse" />}
+            {current.model}
+          </div>
+        </div>
+
         {/* Icône de fond décorative */}
-        <div className={`absolute top-0 right-0 p-8 opacity-10 ${config.color}`}>
+        <div className={`absolute top-0 right-0 p-8 opacity-10 ${config.color} z-0`}>
           <config.icon size={140} />
         </div>
 
@@ -86,10 +98,8 @@ export default function WeatherCard({ current, config, realSnow }) {
             </div>
           </div>
 
-          {/* Section Statistiques - Optimisée pour éviter le chevauchement */}
           <div className={`grid ${current.snow > 0 ? 'grid-cols-3' : 'grid-cols-2'} gap-2 sm:gap-4 border-t border-slate-50 pt-6`}>
-
-            {/* Températures - On réduit le padding à gauche */}
+            {/* Températures */}
             <div className="text-left">
               <p className="text-[8px] sm:text-[9px] font-black text-slate-300 uppercase mb-1">Températures</p>
               <div className="flex items-baseline gap-1 sm:gap-2">
@@ -98,7 +108,7 @@ export default function WeatherCard({ current, config, realSnow }) {
               </div>
             </div>
 
-            {/* Vent & Rafales - On réduit les marges et la taille sur mobile */}
+            {/* Vent & Rafales */}
             <div className="text-left border-l border-inherit pl-2 sm:pl-4">
               <p className="text-[8px] sm:text-[9px] font-black text-slate-300 uppercase mb-1 flex items-center gap-1 whitespace-nowrap">
                 <Wind size={10} /> Vent moyen (Rafales)
@@ -114,7 +124,7 @@ export default function WeatherCard({ current, config, realSnow }) {
               </div>
             </div>
 
-            {/* Neige Fraîche - Aligné à droite pour maximiser l'espace central */}
+            {/* Neige Fraîche */}
             {current.snow > 0.9 && (
               <div className="text-right border-l border-inherit pl-2 sm:pl-4">
                 <p className="text-[8px] sm:text-[9px] font-black text-slate-300 uppercase mb-1">Neige</p>
